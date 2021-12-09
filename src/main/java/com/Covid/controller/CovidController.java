@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Covid.CovidReportApplication;
 import com.Covid.exception.IdNotFoundException;
 import com.Covid.model.Covid;
 import com.Covid.repository.CovidRepository;
@@ -24,22 +26,30 @@ import com.Covid.repository.CovidRepository;
 @RestController
 @RequestMapping("/api/v1/")
 public class CovidController {
+
+	Logger log = LoggerFactory.getLogger(CovidReportApplication.class);
 	@Autowired
 	private CovidRepository covidRepository;
 
 	// Get Report
 	@GetMapping("/report")
 	public List<Covid> getReport() {
-		return this.covidRepository.findAll();
+		log.debug("Request :");
+		List<Covid> resp = this.covidRepository.findAll();
+		log.debug("Response :", resp);
+		return resp;
 	}
 
 	// Get report by ID
 	@GetMapping("/report/{id}")
 	public ResponseEntity<Covid> getReportById(@PathVariable(value = "id") Long stateID) throws IdNotFoundException {
+		log.debug("Request by id"+stateID);
 		Covid cd = covidRepository.findById(stateID)
 				.orElseThrow(() -> new IdNotFoundException("state ID not found :" + stateID));
 
+		log.debug("Response ",log);
 		return ResponseEntity.ok().body(cd);
+
 	}
 
 	// Save Report
@@ -51,6 +61,7 @@ public class CovidController {
 	@PutMapping("/report/{id}")
 	public ResponseEntity<Covid> UpdateState(@PathVariable(value = "id") Long stateID,
 			@Validated @RequestBody Covid covidDetails) throws IdNotFoundException {
+
 		Covid cd = covidRepository.findById(stateID)
 				.orElseThrow(() -> new IdNotFoundException("state ID not found :" + stateID));
 		cd.setCases(covidDetails.getCases());
