@@ -25,6 +25,7 @@ import com.Covid.repository.CovidRepository;
 
 @RestController
 @RequestMapping("/api/v1/")
+
 public class CovidController {
 
 	Logger log = LoggerFactory.getLogger(CovidReportApplication.class);
